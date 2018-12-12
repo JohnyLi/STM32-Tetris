@@ -1,0 +1,27 @@
+--cpu Cortex-M3
+".\objects\main.o"
+".\objects\game.o"
+".\objects\square.o"
+".\objects\gameframe.o"
+".\objects\adc.o"
+".\objects\tsensor.o"
+".\objects\lcd.o"
+".\objects\led.o"
+".\objects\remote.o"
+".\objects\delay.o"
+".\objects\sys.o"
+".\objects\usart.o"
+".\objects\core_cm3.o"
+".\objects\stm32f10x_it.o"
+".\objects\misc.o"
+".\objects\stm32f10x_adc.o"
+".\objects\stm32f10x_gpio.o"
+".\objects\stm32f10x_rcc.o"
+".\objects\stm32f10x_tim.o"
+".\objects\stm32f10x_usart.o"
+".\objects\startup_stm32f10x_hd.o"
+".\objects\system_stm32f10x.o"
+--strict --scatter ".\Objects\eluosifangkuai.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\eluosifangkuai.map" -o .\Objects\eluosifangkuai.axf
