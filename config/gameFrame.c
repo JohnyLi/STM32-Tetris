@@ -4,8 +4,14 @@
 #include "game.h"
 
 gameFrame GameFrame;
-square HeadSquare;
+struct square HeadSquare;
+struct square DropSquareHead;
+struct square NULLSQUARE;
+struct heightROW *heightHead;
 u16 SQUARE_LENGTH;
+u8 dropXmin;
+u8 dropXmax;
+u16 dropYmax;
 
 void init_gameFrame(void){
 	u16 interval_left_and_right = 20;   	//框框与左右两边的距离，左右两边距离相等.
@@ -17,7 +23,7 @@ void init_gameFrame(void){
 	u16 yMin = interval_up;
 	u16 xMax = lcddev.width - interval_left_and_right;
 	u16 yMax = lcddev.height - interval_down;
-	u8 rowNum = 20;			//一行多少个方块
+	u8 rowNum = 10;			//一行多少个方块
 	u16 square_length_of_side = width/rowNum;			//一个方块的边长
 	
 	GameFrame.interval_up = interval_up;
@@ -33,8 +39,15 @@ void init_gameFrame(void){
 	
 	
 	SQUARE_LENGTH = square_length_of_side;
-	HeadSquare.isHead = 1;
-	HeadSquare.isStop = 1;
+	HeadSquare.isNULL = 0;
+	DropSquareHead.isNULL = 0;
+	HeadSquare.next = &NULLSQUARE;
+	DropSquareHead.next = &NULLSQUARE;
+	
+	
+	nowSpeed = originSpeed;
+	NULLSQUARE.isNULL=1;
+	initHeightHead();
 	
 }
 

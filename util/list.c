@@ -1,37 +1,42 @@
-#include "list.h"
 #include "square.h"
 
-void list_append(square *Square){
-	square *temp=&HeadSquare;
-	while(temp->next!=NULL){
+void list_append(struct square *Head,struct square *Square){
+	struct square *temp=Head;
+	while(temp->next->isNULL==0){
 		temp = temp->next;
 	}
 	temp->next = Square;
-	Square->next = NULL;
+	Square->next = &NULLSQUARE;
 }
 
-void list_remove(square *Square){
-	square *last=&HeadSquare
-	square *temp=HeadSquare.next;
-	
-	while(temp!=NULL){
-		if(temp==Square)
+void list_remove(struct square *Head,struct square *Square){
+	struct square *last=Head;
+	struct square *temp;
+	temp=Head->next;
+	while(temp->isNULL==0){
+		if(temp==Square){
 			break;
+		}
+			
 		last = last->next;
 		temp = temp->next;
 	}
 	
 	last->next = temp->next;
-	temp->next = NULL;
+	temp->next = &NULLSQUARE;
 	
 }
 
-void list_show(void){
+void list_show(struct square *Head){
+	struct square *temp;
+	temp = Head;
 	printf("[");
-	square *temp=&HeadSquare;
-	while(temp!=NULL){
+	
+	while(temp->isNULL==0){
 		printf("(%d,%d),",temp->xMin,temp->yMax);
 		temp=temp->next;
 	}
-	printf("]");
+	printf("]\r\n");
 }
+
+

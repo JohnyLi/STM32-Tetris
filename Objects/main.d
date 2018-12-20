@@ -36,6 +36,7 @@
 .\objects\main.o: .\HARDWARE\LCD\lcd.h
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\main.o: .\HARDWARE\REMOTE\remote.h
+.\objects\main.o: .\HARDWARE\KEY\key.h
 .\objects\main.o: .\config\gameFrame.h
-.\objects\main.o: .\config\square.h
 .\objects\main.o: .\config\game.h
+.\objects\main.o: .\config\square.h

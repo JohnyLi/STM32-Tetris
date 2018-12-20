@@ -31,7 +31,8 @@
 .\objects\game.o: .\STM32F10x_FWLib\inc\stm32f10x_usart.h
 .\objects\game.o: .\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 .\objects\game.o: .\STM32F10x_FWLib\inc\misc.h
-.\objects\game.o: config\square.h
 .\objects\game.o: config\game.h
+.\objects\game.o: config\square.h
 .\objects\game.o: .\HARDWARE\LCD\lcd.h
 .\objects\game.o: .\HARDWARE\REMOTE\remote.h
+.\objects\game.o: .\HARDWARE\KEY\key.h
