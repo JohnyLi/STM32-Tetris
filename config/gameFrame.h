@@ -17,10 +17,28 @@ typedef struct
 	
 }gameFrame;
 
+typedef struct
+{
+	u8 width;			
+	u8 height;			 
+	u16 xMin;
+	u16 yMin;
+	u16 xMax;
+	u16 yMax;
+}nextFrame; //显示下一个方块组的界面
+
 extern gameFrame GameFrame;
 
 void init_gameFrame(void); //初始化游戏界面参数和方块边长
 
 void draw_gameFrame(void); //画游戏界面
 
+void init_nextFrame(void); 
+
 void draw_time(void); //时间
+
+void draw_score(void);
+
+void draw_nextFrame(void);
+
+extern nextFrame NextFrame;

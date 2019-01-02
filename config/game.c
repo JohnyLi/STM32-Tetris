@@ -17,23 +17,39 @@ u16 ACTION_DOWN = 168;
 u16 ACTION_UP = 98;
 
 u8 originSpeed = 1;
-u8 changeSpeed = 3;
+u8 changeSpeed = 2;
 u8 maxSpeed = 9;
 u16 gameTime = 0;
 u16 refreshMs = 50;
 u8 nowSpeed;
 
+u8 continueSeek = 1;
+u8 cleanLineSeek = 0;
+u8 stopTime = 10;	
 
-
-void updateGame(void){
-	u8 action;
-	action = getKeyAction();
-	if(action == 0)
-		action = getRemoteAction();
+u8 updateGame(u8 action){
 	
-	if(heightHead->yMin<=GameFrame.yMin){
+	if(heightHead->yMin<GameFrame.yMin){
 		gameOver = 1;
-		return;
+		return 1;
+	}
+	
+	if(cleanLineSeek!=0){
+		if(cleanLineSeek==stopTime)
+			makeStopGroupDrop();
+		
+		cleanLineSeek--;
+		if(cleanLineSeek==0){
+			LCD_Fill(GameFrame.xMin,GameFrame.yMin,GameFrame.xMax,GameFrame.yMax,WHITE);
+			draw_time();
+			draw_gameFrame();
+			drawStopGroup();
+		}
+		return 1;
+	}
+	
+	if(continueSeek==0){
+		return 0;
 	}
 		
 	
@@ -47,12 +63,17 @@ void updateGame(void){
 	
 	draw_gameFrame();
 	draw_time();
+	draw_score();
 	
 	//list_show(&DropSquareHead);
 	//list_show(&HeadSquare);
 	
 	if(DropSquareHead.next->isNULL==1)
 		setSquareGroup();
+	
+	
+	
+	return 1;
 	
 	
 }
@@ -95,24 +116,26 @@ void makeAction(u8 action){
 		refreshDropAttr();
 	}
 	else if(action==ACTION_CHANGE){
-		
+		rotateSquareGroup();
 		
 	}
 	else if(action==ACTION_STOP){
-		
-		
+		//if(continueSeek == 1)
+			//continueSeek = 0;
+		//else
+			//continueSeek = 1;
 	}
 	else if(action==ACTION_DOWN){
 		nowSpeed += changeSpeed;
-		if(nowSpeed > maxSpeed)
+		if(nowSpeed >= maxSpeed)
 			nowSpeed = maxSpeed;
 	}
 	else if(action==ACTION_UP){
-		if(nowSpeed < changeSpeed){
+		nowSpeed -= changeSpeed;
+		if(nowSpeed <= changeSpeed){
 			nowSpeed = originSpeed;
 		}
-		else
-			nowSpeed -= changeSpeed;
+			
 		
 		
 	}
@@ -162,45 +185,123 @@ void clearDropGroup(void){
 }
 
 void checkNeedStop(void){
+	struct square *tempSeek;
+	u8 loss = 100;
 	if(dropYmax>=GameFrame.yMax){				//当最大高度超过或等于下底时，将dropgroup对回底部，并将其从DropSquareHead链表移到HeadSquare
-		u8 loss;
-		struct square *tempSeek;
 		loss = dropYmax - GameFrame.yMax;
+	}
+	else if(heightHead->yMin < dropYmax){    //当最大高度超过height的最小高度时
+		loss = getLossDropSquareCanDrop();
+	}
+	
+	
+	if(loss!=100){
+		u8 result;
 		tempSeek = DropSquareHead.next;
 		while(tempSeek->isNULL==0){
 			struct square *temptempSquare;
 			temptempSquare = tempSeek->next;
 			tempSeek->yMax -= loss;
+			tempSeek->isStop = 1;
 			list_remove(&DropSquareHead,tempSeek);
 			list_append(&HeadSquare,tempSeek);
 			tempSeek = temptempSquare;
 		}
+		result = checkLine();
+		if(result==1){
+			LCD_Clear(WHITE);
+			draw_time();
+			draw_gameFrame();
+			cleanLineSeek = stopTime;
+		}
 		drawStopGroup();
 		refreshHeight();
-	}
-	else if(heightHead->yMin < dropYmax){    //当最大高度超过height的最小高度时
-		u8 loss;
-		struct square *tempSeek;
-		loss = getLossDropSquareCanDrop();
-		tempSeek = DropSquareHead.next;
-		if(loss != 100){
-			while(tempSeek->isNULL==0){
-				struct square *temptempSquare;
-				temptempSquare = tempSeek->next;
-				tempSeek->yMax -= loss;
-				list_remove(&DropSquareHead,tempSeek);
-				list_append(&HeadSquare,tempSeek);
-				tempSeek = temptempSquare;
-			}
-			drawStopGroup();
-			refreshHeight();
-			
-		}
+		
 	}
 	
 	clearDropGroup();
 }
 
+
+
+
+
+
+void makeStopGroupDrop(void){
+	u8 i,lineCount;
+	struct square *temp;
+	u8 lineNum = GameFrame.height/SQUARE_LENGTH;
+	lineCount=0;
+	for(i=0;i<lineNum;i++){
+		u8 loss;
+		u8 count=0;
+		u16 yMax = GameFrame.yMax - SQUARE_LENGTH*i;
+		loss = lineCount*SQUARE_LENGTH;
+		temp = HeadSquare.next;
+		while(temp->isNULL==0){
+			if(temp->yMax == yMax){
+				count++;
+				temp->yMax+=loss;
+			}
+			temp=temp->next;
+		}
+		if(count==0)
+			lineCount++;
+	}
+	
+}
+
+u8 checkLine(void){
+	struct square *temp;
+	u8 i,clearSeek;
+	u8 oldStopNum,newStopNum;
+	u8 lineNum = GameFrame.height/SQUARE_LENGTH;
+	clearSeek = 0;
+	oldStopNum = 0;
+	newStopNum = 0;
+	
+	temp = HeadSquare.next;
+	while(temp->isNULL==0){
+		oldStopNum+=1;
+		temp=temp->next;
+	}
+	
+	for(i=0;i<lineNum;i++){
+		u8 count = 0;
+		u16 yMax = GameFrame.yMax - SQUARE_LENGTH*i;
+		temp = HeadSquare.next;
+		while(temp->isNULL==0){
+			if(temp->yMax == yMax){
+				count++;
+			}
+			temp=temp->next;
+		}
+		if(count==GameFrame.rowNum){
+			clearSeek = 1;
+			temp = HeadSquare.next;
+			while(temp->isNULL==0){
+				struct square *tempNext = temp->next;
+				if(temp->yMax == yMax){
+					list_remove(&HeadSquare,temp);
+					simpleClearSquare(temp);
+					free(temp);
+				}
+				temp = tempNext;
+			}
+			
+		}
+	}
+	
+	temp = HeadSquare.next;
+	while(temp->isNULL==0){
+		newStopNum+=1;
+		temp=temp->next;
+	}
+	
+	score += (oldStopNum-newStopNum)*score_change;
+	
+	return clearSeek;
+}
 
 
 
@@ -231,19 +332,52 @@ u8 getKeyAction(void){
 	u16 key;
 	key=KEY_Scan(0);
 	
-	if(key==KEY0_PRES)
-		return ACTION_RIGHT;
-	else if(key==KEY1_PRES)
-		return ACTION_LEFT;
-	else if(key==WKUP_PRES)
-		return ACTION_DOWN;
-	else{
+	if(key==KEY0_PRES){
 		PressKey = 0;
+		return ACTION_RIGHT;
+	}
+	else if(key==KEY1_PRES){
+		PressKey = 0;
+		return ACTION_LEFT;
+	}
+	else if(key==WKUP_PRES){
+		PressKey = 0;
+		return ACTION_CHANGE;
+	}
+	else{
+		
 		return 0;
 	}
 		
 	
 }
+
+u8 getRemoteAction1(void){
+		u16 key;
+		key=Remote_Scan();	
+		
+		if(key==0){	//未按键时
+			
+		}
+		else{	//按键时
+			if(PressKey!=0){//若PressKey不为0
+				u16 tempKey = PressKey;
+				PressKey = 0;
+				return tempKey;
+			}
+			
+			
+			else if(key==ACTION_LEFT||key==ACTION_RIGHT||key==ACTION_CHANGE||key==ACTION_STOP||key==ACTION_DOWN||key==ACTION_UP){  //若按键为指定按键，则认为该按键已按下
+				PressKey = key;
+			}
+			else{
+				PressKey = 0;
+			}
+				
+		}
+		return 0;
+}
+
 
 
 u8 getRemoteAction(void){

@@ -1,7 +1,6 @@
 .\objects\squaregroup.o: config\squareGroup.c
-.\objects\squaregroup.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\squaregroup.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
 .\objects\squaregroup.o: config\gameFrame.h
+.\objects\squaregroup.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\squaregroup.o: .\SYSTEM\sys\sys.h
 .\objects\squaregroup.o: .\others\stm32f10x.h
 .\objects\squaregroup.o: .\CORE\core_cm3.h
@@ -32,5 +31,6 @@
 .\objects\squaregroup.o: .\STM32F10x_FWLib\inc\stm32f10x_usart.h
 .\objects\squaregroup.o: .\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 .\objects\squaregroup.o: .\STM32F10x_FWLib\inc\misc.h
+.\objects\squaregroup.o: .\HARDWARE\LCD\lcd.h
 .\objects\squaregroup.o: config\square.h
 .\objects\squaregroup.o: config\game.h

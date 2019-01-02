@@ -4,6 +4,7 @@
 ".\objects\square.o"
 ".\objects\gameframe.o"
 ".\objects\list.o"
+".\objects\squaregroup.o"
 ".\objects\lcd.o"
 ".\objects\led.o"
 ".\objects\remote.o"

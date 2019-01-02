@@ -5,11 +5,15 @@
 extern u16 menuTime;
 extern u16 gameTime; //游戏时间
 extern u8  gameOver;
+extern u8 continueSeek;
+extern u16 score;
+extern u8 score_change;
 
 extern u16 refreshMs; //刷新间隔毫秒
 
 extern u8 originSpeed; //原本速度
 extern u8 changeSpeed; //加的速度
+extern u8 maxSpeed;
 extern u8 nowSpeed; //现在的速度
 
 extern u16 ACTION_LEFT;
@@ -31,7 +35,7 @@ u8 getRemoteAction(void);
 
 u8 getKeyAction(void);
 
-void updateGame(void);
+u8 updateGame(u8 action);
 
 void makeAction(u8 action);
 
@@ -47,5 +51,6 @@ void drawStopGroup(void);
 
 void refreshDropAttr(void);
 
+u8 checkLine(void);
 
-
+void makeStopGroupDrop(void);
