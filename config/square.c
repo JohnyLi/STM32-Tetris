@@ -293,7 +293,7 @@ u8 checkDropSquareCanMoveLeftORRight(void){
 //检查插入情况,重叠返回插入的距离,无则返回100
 u8 getLossDropSquareCanDrop(void){
 	struct square *tempDrop,*tempStop;
-	
+	int xx = 1;
 	tempDrop = DropSquareHead.next;
 	while(tempDrop->isNULL==0){
 		tempStop = HeadSquare.next;
